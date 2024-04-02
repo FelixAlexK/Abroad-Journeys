@@ -1,27 +1,32 @@
 ---
 
 
-import { db, Comment, Author, Post, eq } from 'astro:db';
 
-const post = await db.select().from(Post).innerJoin(Comment, eq(Post.commentId, Comment.commentId))
-const commentsWithAuthors = await db.select()
- .from(Comment)
- .innerJoin(Author, eq(Comment.authorId, Author.authorId))
- 
+import { db, Comment, Author, Post, eq, Likes,  } from 'astro:db';
+import {getAuthorByPostId, getAuthorByEmail, getAllAuthors} from '../controller/author'
+import {getAllPosts, getPostsWithDetails, } from '../controller/post'
+import {login } from '../controller/auth'
+
+
+import About from './about.astro';
+
+await login('felix.kuhbier@gmx.de', 'abc')
 ---
 
 <h2>Comments</h2>
 
 {
-  post.map(({ Post, Comment }) => (
-    <article>
-      <h1>{Post.title}</h1>
-      
-      <p>{Post.body}</p>
-      <p>{Comment.content}</p>
-    </article>
-  ))
+  // comments.map(({  }) => (
+  //   <article>
+  //     <p>{Comment.content}</p>
+  //     <small>{Author.name}</small>
+
+  //   </article>
+
+  // ))
 
   
 }
+
+
 

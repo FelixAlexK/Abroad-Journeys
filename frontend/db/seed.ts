@@ -10,28 +10,61 @@ export default async function seed() {
       password: "password",
       salt: null,
     },
+    {
+      authorId: 2,
+      name: "Hans",
+      email: "hans@gmx.de",
+      password: "password",
+      salt: null,
+    },
   ]);
+  await db.insert(Post).values([
+    {
+      postId: 1,
+      body: "My First Post",
+      title: "First Post",
+      status: "published",
+      publishedAt: null,
+      authorId: 1,
+    },
+    {
+      postId: 2,
+      body: "My Second Post",
+      title: "Second Post",
+      status: "published",
+      publishedAt: null,
+      authorId: 2,
+    },
+  ]);
+  await db.insert(Likes).values([
+    { likeId: 1, amount: 20, postId: 1 },
+    { likeId: 2, amount: 10000, postId: 2 },
+  ]);
+
   await db.insert(Comment).values([
     {
       authorId: 1,
       content: "Hello World",
       commentId: 1,
       publishedAt: null,
-    },
-  ]);
-
-  await db.insert(Likes).values([{ likeId: 1, amount: 20 }]);
-
-  await db.insert(Post).values([
-    {
+      author: "Felix",
       postId: 1,
-      author: "Felix Kuhbier",
-      body: "My First Post",
-      likeId: 1,
-      title: "First Post",
-      status: "published",
+    },
+    {
+      authorId: 2,
+      content: "Moin Meister",
+      commentId: 2,
       publishedAt: null,
-      commentId: 1,
+      author: "Joachim",
+      postId: 2,
+    },
+    {
+      authorId: 1,
+      content: "Super Cool",
+      commentId: 3,
+      publishedAt: null,
+      author: "Felix",
+      postId: 1,
     },
   ]);
 }
