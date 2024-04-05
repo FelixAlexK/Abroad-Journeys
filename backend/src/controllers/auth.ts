@@ -1,5 +1,5 @@
 import express from "express";
-import { createUser, getUserByEmail, updateUserById } from "../db";
+import { createUser, getUserByEmail, updateUserById } from "../model/userModel";
 import { authentication, random } from "../helpers";
 import { DOMAIN, SESSION_TOKEN } from "../constants";
 import { HttpStatusCodes } from "../helpers/HttpHelper";
@@ -13,8 +13,8 @@ export const register = async (req: express.Request, res: express.Response) => {
 
     const result = await getUserByEmail(email);
 
-    if (!result || result.length > 0) {
-      return res.sendStatus(400);
+    if (result) {
+      return res.sendStatus(HttpStatusCodes["bad-request"]);
     }
 
     const salt = random();
@@ -44,21 +44,21 @@ export const login = async (req: express.Request, res: express.Response) => {
 
     const result = await getUserByEmail(email);
 
-    if (!result || result.length === 0) {
+    if (!result) {
       return res.sendStatus(HttpStatusCodes["bad-request"]);
     }
 
-    const user = result[0];
+    const user = result;
     const expectedHash = authentication(user.salt!, password);
 
     if (user.password !== expectedHash) {
       return res.sendStatus(HttpStatusCodes["bad-request"]);
     }
 
-    user.sessionToken = authentication(random(), user.password);
+    user.session_token = authentication(random(), user.password);
     const updatedUser = await updateUserById(user.user_id, user);
 
-    res.cookie(SESSION_TOKEN, user.sessionToken, {
+    res.cookie(SESSION_TOKEN, user.session_token, {
       domain: DOMAIN,
       path: "/",
       expires: new Date(Date.now() + 900000),
