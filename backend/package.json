@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "migrate": "tsx src/migrate.ts",
     "generate": "drizzle-kit generate:pg",
-    "migrate": "pnpm run generate && ts-node ./src/migrate.ts",
-    "start": "nodemon ./src/index.ts"
+    "drop": "drizzle-kit drop",
+    "start": "tsx watch src/index.ts"
   },
   "keywords": [
-    "Backend"
+    "Backend",
+    "Drizzle"
   ],
   "author": "Felix Kuhbier",
   "license": "MIT",
@@ -21,8 +23,7 @@
     "@types/express": "^4.17.21",
     "@types/pg": "^8.11.4",
     "drizzle-kit": "^0.20.14",
-    "nodemon": "^3.1.0",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.7.2",
     "typescript": "^5.4.3"
   },
   "dependencies": {

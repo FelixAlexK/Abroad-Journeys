@@ -1,2 +1,2 @@
-export const SESSION_TOKEN = "LEARNLOG_API_AUTH";
+export const SESSION_TOKEN = "ABROAD_JOURNEY_AUTH";
 export const DOMAIN = "localhost";

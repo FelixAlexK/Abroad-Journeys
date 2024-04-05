@@ -63,7 +63,7 @@ export const login = async (req: express.Request, res: express.Response) => {
       path: "/",
       expires: new Date(Date.now() + 900000),
     });
-
+    user.is_active = true;
     return res.status(200).json(updatedUser).end();
   } catch (error) {
     console.log(error);
