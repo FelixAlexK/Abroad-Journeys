@@ -29,6 +29,10 @@ import { Label } from '@/components/ui/label'
                         </div>
                     </div>
                     <div class="grid gap-2">
+                        <Label for="username">Username</Label>
+                        <Input id="username" type="text" placeholder="MaxRobinson" required />
+                    </div>
+                    <div class="grid gap-2">
                         <Label for="email">Email</Label>
                         <Input id="email" type="email" placeholder="m@example.com" required />
                     </div>
