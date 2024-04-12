@@ -3,31 +3,34 @@ import { createUser, getUserByEmail, updateUserById } from "../model/userModel";
 import { authentication, random } from "../helpers";
 import { DOMAIN, SESSION_TOKEN } from "../constants";
 import { HttpStatusCodes } from "../helpers/HttpHelper";
+
+import { schemas } from "../validation";
 export const register = async (req: express.Request, res: express.Response) => {
   try {
-    const { username, email, password, first_name, last_name } = req.body;
+    const validation = schemas.registerUser_Body.safeParse(req.body);
 
-    if (!username || !email || !password) {
-      return res.sendStatus(400);
+    if (!validation.success) {
+      return res.status(HttpStatusCodes["bad-request"]).json(validation.error);
     }
+    const data = validation.data;
 
-    const result = await getUserByEmail(email);
+    const user = await getUserByEmail(data.email);
 
-    if (result) {
+    if (user) {
       return res.sendStatus(HttpStatusCodes["bad-request"]);
     }
 
     const salt = random();
-    const user = await createUser({
-      username: username,
-      email: email,
+    const newUser = await createUser({
+      username: data.username,
+      email: data.email,
       salt: salt,
-      first_name: first_name,
-      last_name: last_name,
-      password: authentication(salt, password),
+      first_name: data.first_name,
+      last_name: data.last_name,
+      password: authentication(salt, data.password),
     });
 
-    return res.status(200).json(user).end();
+    return res.status(200).json(newUser).end();
   } catch (error) {
     console.error(error);
     return res.sendStatus(400);
@@ -36,26 +39,26 @@ export const register = async (req: express.Request, res: express.Response) => {
 
 export const login = async (req: express.Request, res: express.Response) => {
   try {
-    const { email, password } = req.body;
+    const validation = schemas.loginUser_Body.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(HttpStatusCodes["bad-request"]).json(validation.error);
+    }
+    const data = validation.data;
+    const user = await getUserByEmail(data.email);
 
-    if (!email || !password) {
+    if (!user) {
       return res.sendStatus(HttpStatusCodes["bad-request"]);
     }
 
-    const result = await getUserByEmail(email);
-
-    if (!result) {
-      return res.sendStatus(HttpStatusCodes["bad-request"]);
-    }
-
-    const user = result;
-    const expectedHash = authentication(user.salt!, password);
+    const expectedHash = authentication(user.salt!, data.password);
 
     if (user.password !== expectedHash) {
-      return res.sendStatus(HttpStatusCodes["bad-request"]);
+      return res.sendStatus(HttpStatusCodes["unauthorized"]);
     }
 
     user.session_token = authentication(random(), user.password);
+    user.is_active = true;
+    user.last_login = new Date(Date.now());
     const updatedUser = await updateUserById(user.user_id, user);
 
     res.cookie(SESSION_TOKEN, user.session_token, {
@@ -63,10 +66,15 @@ export const login = async (req: express.Request, res: express.Response) => {
       path: "/",
       expires: new Date(Date.now() + 900000),
     });
-    user.is_active = true;
     return res.status(200).json(updatedUser).end();
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
   }
+};
+
+export const logout = async (req: express.Request, res: express.Response) => {
+  return res
+    .status(HttpStatusCodes.ok)
+    .clearCookie(SESSION_TOKEN, { path: "/", domain: DOMAIN });
 };

@@ -6,24 +6,23 @@ import {
   updatePostsById as updatePostsByIdModel,
 } from "../model/postModel";
 import { HttpStatusCodes } from "../helpers/HttpHelper";
-import { Post } from "../schema/posts";
 
+import { schemas } from "../validation";
+import { z } from "zod";
 // Create
 export const createPost = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const { title, state, content, author_id } = req.body;
-
-  if (!title || !state || !content || !author_id) {
-    return res.sendStatus(HttpStatusCodes["bad-request"]);
+  const validation = schemas.Post.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(HttpStatusCodes["bad-request"]).json(validation.error);
   }
-
+  const data = validation.data;
   const post = await createPostModel({
-    author_id: author_id,
-    content: content,
-    title: title,
-    state: state,
+    author_id: data.author_id,
+    content: data.content,
+    title: data.title,
   });
 
   return res.status(HttpStatusCodes["ok"]).json(post).end();
@@ -44,7 +43,6 @@ export const getPostsByAuthorId = async (
   res: express.Response
 ) => {
   const { author_id } = req.params;
-
   if (!author_id) {
     return res.sendStatus(HttpStatusCodes["bad-request"]);
   }
