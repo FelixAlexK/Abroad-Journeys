@@ -12,6 +12,7 @@ export const createUser = async (new_user: NewUser) => {
     email: UserTable.email,
     first_name: UserTable.first_name,
     last_name: UserTable.last_name,
+    session_token: UserTable.session_token,
   });
 };
 
@@ -50,7 +51,7 @@ export const updateUserById = async (user_id: string, updated_user: User) => {
       username: UserTable.username,
       email: UserTable.email,
       profile_picture: UserTable.profile_picture,
-      first_name: UserTable.first_name,
-      last_name: UserTable.last_name,
+      session_token: UserTable.session_token,
     });
 };
+
