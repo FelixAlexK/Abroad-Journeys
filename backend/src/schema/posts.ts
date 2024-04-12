@@ -20,7 +20,7 @@ export const PostTable = pgTable("posts", {
   updated_at: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
   state: postState("postState").default("DRAFT").notNull(),
   author_id: uuid("author_id")
-    .references(() => UserTable.user_id, {onDelete: "no action"})
+    .references(() => UserTable.user_id, {onDelete: "no action", onUpdate: "cascade"})
     .notNull(),
 });
 

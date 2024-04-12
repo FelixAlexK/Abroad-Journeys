@@ -11,10 +11,16 @@ export const PostCategoryTable = pgTable(
   "postCategory",
   {
     post_id: uuid("post_id")
-      .references(() => PostTable.post_id, { onDelete: "cascade" })
+      .references(() => PostTable.post_id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      })
       .notNull(),
     category_id: uuid("category_id")
-      .references(() => CategoryTable.category_id, { onDelete: "cascade" })
+      .references(() => CategoryTable.category_id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      })
       .notNull(),
   },
   (postCategory) => {
