@@ -1,9 +1,4 @@
-import {
-  pgTable,
-  text,
-  uuid,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, uuid, timestamp } from "drizzle-orm/pg-core";
 
 import { PostTable } from "./posts";
 import { UserTable } from "./users";
@@ -15,10 +10,12 @@ export const CommentTable = pgTable("comments", {
   created_at: timestamp("created_at").defaultNow().notNull(),
 
   post_id: uuid("post_id")
-    .references(() => PostTable.post_id)
+    .references(() => PostTable.post_id, { onDelete: "cascade" })
     .notNull(),
 
   author_id: uuid("author_id")
-    .references(() => UserTable.user_id)
+    .references(() => UserTable.user_id, {
+      onDelete: "restrict",
+    })
     .notNull(),
 });

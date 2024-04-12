@@ -1,9 +1,4 @@
-import {
-  pgTable,
-  text,
-  uuid,
-  primaryKey,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, uuid, primaryKey } from "drizzle-orm/pg-core";
 
 import { PostTable } from "./posts";
 
@@ -16,10 +11,10 @@ export const PostCategoryTable = pgTable(
   "postCategory",
   {
     post_id: uuid("post_id")
-      .references(() => PostTable.post_id)
+      .references(() => PostTable.post_id, { onDelete: "cascade" })
       .notNull(),
     category_id: uuid("category_id")
-      .references(() => CategoryTable.category_id)
+      .references(() => CategoryTable.category_id, { onDelete: "cascade" })
       .notNull(),
   },
   (postCategory) => {
