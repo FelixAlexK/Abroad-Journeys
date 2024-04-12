@@ -69,3 +69,9 @@ export const updatePostsById = async (post_id: string, updated_post: Post) => {
       updated_at: PostTable.updated_at,
     });
 };
+
+// delete
+
+export const deletePostById = async (post_id: string) => {
+  return await db.delete(PostTable).where(eq(PostTable.post_id, post_id));
+};
